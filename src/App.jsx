@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "nanoid";
 import { setFilter } from "./redux/filtersSlice";
 // import { addContact, deleteContact } from "./redux/contactsSlice";
-import { apiRequestById } from "./redux/contactsOps";
+import { deleteContact, fetchContacts, addContact } from "./redux/contactsOps";
 
 function App() {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ function App() {
   const filter = useSelector(getFilter);
 
   useEffect(() => {
-    dispatch(apiRequestById());
+    dispatch(fetchContacts());
   }, [dispatch]);
   // useEffect(() => {
   //   localStorage.setItem("contacts", JSON.stringify(contacts));
@@ -40,10 +40,11 @@ function App() {
     dispatch(action);
   };
 
-  const deleteChooseContact = (contactId) => {
-    const action = deleteContact(contactId);
-    dispatch(action);
-  };
+  // const deleteChooseContact = (contactId) => {
+  //   const action = deleteContact(contactId);
+  //   dispatch(action);
+  // };
+  const deleteChooseContact = (contactId) => dispatch(deleteContact(contactId));
   const onChangeFilter = (event) => {
     const action = setFilter(event.target.value);
     dispatch(action);

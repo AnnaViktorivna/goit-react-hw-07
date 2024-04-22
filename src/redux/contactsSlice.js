@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import apiRequestById from "../redux/contactsOps";
+import { fetchContacts, addContact, deleteContact } from "../redux/contactsOps";
 
 const INITIAL_STATE = {
   items: [],
@@ -14,15 +14,42 @@ export const contactsSlice = createSlice({
   // Додаємо обробку зовнішніх екшенів
   extraReducers: (builder) => {
     builder
-      .addCase(apiRequestById.pending, (state, action) => {
+      .addCase(fetchContacts.pending, (state, action) => {
         state.loading = true;
       })
-      .addCase(apiRequestById.fulfilled, (state, action) => {
+      .addCase(fetchContacts.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
         state.items = action.payload;
       })
-      .addCase(apiRequestById.rejected, (state, action) => {
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(addContact.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.items.push(action.payload);
+      })
+      .addCase(addContact.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteContact.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteContact.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        const index = state.items.findIndex(
+          (task) => task.id === action.payload.id
+        );
+        state.items.splice(index, 1);
+      })
+      .addCase(deleteContact.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
