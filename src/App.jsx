@@ -3,32 +3,30 @@ import "./App.css";
 import ContactForm from "./components/ContactForm/ContactForm";
 import ContactList from "./components/ContactList/ContactList";
 import {
-  getContacts,
-  getError,
-  getFilter,
-  getIsLoading,
+  selectContacts,
+  selectError,
+  selectFilter,
+  selectLoading,
 } from "./redux/selectors";
 // import SearchBox from "./components/SearchBox/SearchBox";
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from "nanoid";
 import { setFilter } from "./redux/filtersSlice";
+import { selectFilteredContacts } from "./redux/contactsSlice";
 // import { addContact, deleteContact } from "./redux/contactsSlice";
 import { deleteContact, fetchContacts, addContact } from "./redux/contactsOps";
 
 function App() {
   const dispatch = useDispatch();
-  const loading = useSelector(getIsLoading);
-  const error = useSelector(getError);
-  const contacts = useSelector(getContacts);
+  const loading = useSelector(selectLoading);
+  const error = useSelector(selectError);
+  // const contacts = useSelector(selectContacts);
 
-  const filter = useSelector(getFilter);
-
+  const filter = useSelector(selectFilter);
+  const filteredContacts = useSelector(selectFilteredContacts);
   useEffect(() => {
     dispatch(fetchContacts());
   }, [dispatch]);
-  // useEffect(() => {
-  //   localStorage.setItem("contacts", JSON.stringify(contacts));
-  // }, [contacts]);
 
   const addNewContact = (newContact) => {
     const newUserContact = {
@@ -40,20 +38,17 @@ function App() {
     dispatch(action);
   };
 
-  // const deleteChooseContact = (contactId) => {
-  //   const action = deleteContact(contactId);
-  //   dispatch(action);
-  // };
   const deleteChooseContact = (contactId) => dispatch(deleteContact(contactId));
+
   const onChangeFilter = (event) => {
     const action = setFilter(event.target.value);
     dispatch(action);
   };
   // console.log(event.target.value);
 
-  const visibleContact = contacts.filter((contact) => {
-    return contact.name.toLowerCase().includes(filter.toLowerCase());
-  });
+  // const visibleContact = contacts.filter((contact) => {
+  //   return contact.name.toLowerCase().includes(filter.toLowerCase());
+  // });
 
   return (
     <div>
@@ -66,7 +61,7 @@ function App() {
         value={filter}
         onChange={onChangeFilter}
       />
-      <ContactList contacts={visibleContact} onDelete={deleteChooseContact} />
+      <ContactList contacts={filteredContacts} onDelete={deleteChooseContact} />
     </div>
   );
 }

@@ -1,11 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchContacts, addContact, deleteContact } from "../redux/contactsOps";
+import { createSelector } from "@reduxjs/toolkit";
+import {
+  selectError,
+  selectLoading,
+  selectContacts,
+  selectFilter,
+} from "./selectors";
 
 const INITIAL_STATE = {
   items: [],
   loading: false,
   error: null,
 };
+
+// Мемоізований селектор для фільтрації контактів
+export const selectFilteredContacts = createSelector(
+  [selectContacts, selectFilter],
+  (contacts, filters) => {
+    return contacts.filter((contact) => {
+      return contact.name.toLowerCase().includes(filters.toLowerCase());
+    });
+  }
+);
 
 export const contactsSlice = createSlice({
   // Ім'я слайсу
